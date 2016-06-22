@@ -17,6 +17,8 @@ public abstract class AbstractGenericDao<T> {
     public abstract String getDeleteQuery();
     public abstract String getIdQuery();
 
+
+
     protected abstract List<T> parseResultSet(ResultSet rs) throws SQLException;
 
     protected abstract void preparedStatementForInsert(PreparedStatement statement, T object) throws SQLException;
@@ -29,6 +31,10 @@ public abstract class AbstractGenericDao<T> {
     public abstract void update(T object) throws SQLException;
 
     public abstract T getById(int id) throws SQLException;
+
+    public abstract T dataVerify(String username, String password) throws SQLException;
+
+    public abstract T passwordVerify(String username, String password) throws SQLException;
 
     public abstract T getUserByUsername(String username) throws SQLException;
 

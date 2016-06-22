@@ -9,40 +9,156 @@
     <database-model serializer="dbm" rdbms="MYSQL" format-version="2.5">
       <schema id="1" name="userdata"/>
       <table id="2" parent="1" name="users"/>
-      <column id="3" parent="2" name="id">
+      <table id="3" parent="1" name="roles"/>
+      <column id="4" parent="2" name="id">
         <mandatory>1</mandatory>
         <data-type>int(11)</data-type>
       </column>
-      <column id="4" parent="2" name="username">
+      <column id="5" parent="2" name="username">
         <data-type>varchar(16)</data-type>
       </column>
-      <column id="5" parent="2" name="password">
+      <column id="6" parent="2" name="password">
         <data-type>varchar(25)</data-type>
       </column>
-      <column id="6" parent="2" name="first_name">
+      <column id="7" parent="2" name="first_name">
         <data-type>varchar(45)</data-type>
       </column>
-      <column id="7" parent="2" name="last_name">
+      <column id="8" parent="2" name="last_name">
         <data-type>varchar(45)</data-type>
       </column>
-      <column id="8" parent="2" name="creation_date">
+      <column id="9" parent="2" name="creation_date">
         <mandatory>1</mandatory>
         <data-type>timestamp</data-type>
         <default-expression>&apos;CURRENT_TIMESTAMP&apos;</default-expression>
       </column>
-      <index id="9" parent="2" name="username_UNIQUE">
+      <column id="10" parent="2" name="role_id">
+        <data-type>int(11)</data-type>
+      </column>
+      <index id="11" parent="2" name="roles_id_idx">
+        <columns>role_id</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <index id="12" parent="2" name="username_UNIQUE">
         <columns>username</columns>
         <desc-columns></desc-columns>
         <unique>1</unique>
       </index>
-      <key id="10" parent="2" name="PRIMARY">
+      <key id="13" parent="2" name="PRIMARY">
         <columns>id</columns>
         <primary>1</primary>
       </key>
-      <key id="11" parent="2" name="username_UNIQUE">
+      <key id="14" parent="2" name="username_UNIQUE">
         <columns>username</columns>
         <underlying-index>username_UNIQUE</underlying-index>
       </key>
+      <foreign-key id="15" parent="2" name="role_id">
+        <columns>role_id</columns>
+        <ref-key>~.roles.PRIMARY</ref-key>
+        <cascade-update-rule>restrict</cascade-update-rule>
+        <cascade-delete-rule>restrict</cascade-delete-rule>
+      </foreign-key>
+      <column id="16" parent="3" name="role_id">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="17" parent="3" name="roles">
+        <mandatory>1</mandatory>
+        <data-type>varchar(12)</data-type>
+      </column>
+      <index id="18" parent="3" name="roles_UNIQUE">
+        <columns>roles</columns>
+        <desc-columns></desc-columns>
+        <unique>1</unique>
+      </index>
+      <key id="19" parent="3" name="PRIMARY">
+        <columns>role_id</columns>
+        <primary>1</primary>
+      </key>
+      <key id="20" parent="3" name="roles_UNIQUE">
+        <columns>roles</columns>
+        <underlying-index>roles_UNIQUE</underlying-index>
+      </key>
+    </database-model>
+  </data-source>
+  <data-source name="MySQL - articles@localhost" uuid="8b00f30f-d71f-4db8-bb8a-6ac47b980584">
+    <database-info product="MySQL" version="5.7.12-log" jdbc-version="4.0" driver-name="MySQL Connector Java" driver-version="mysql-connector-java-5.1.35 ( Revision: 5fb9c5849535c13917c2cf9baaece6ef9693ef27 )">
+      <extra-name-characters>#@</extra-name-characters>
+      <identifier-quote-string>`</identifier-quote-string>
+    </database-info>
+    <case-sensitivity plain-identifiers="lower" quoted-identifiers="lower"/>
+    <database-model serializer="dbm" rdbms="MYSQL" format-version="2.5">
+      <schema id="1" name="articles"/>
+      <table id="2" parent="1" name="articles"/>
+      <table id="3" parent="1" name="categories"/>
+      <table id="4" parent="1" name="subcategories"/>
+      <column id="5" parent="2" name="article_id">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="6" parent="2" name="article">
+        <data-type>longtext</data-type>
+      </column>
+      <column id="7" parent="2" name="subcategory_id">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="8" parent="2" name="creation_date">
+        <data-type>timestamp</data-type>
+      </column>
+      <column id="9" parent="2" name="update_date">
+        <data-type>timestamp</data-type>
+      </column>
+      <column id="10" parent="2" name="name">
+        <data-type>varchar(45)</data-type>
+      </column>
+      <index id="11" parent="2" name="subcategory_id_idx">
+        <columns>subcategory_id</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <key id="12" parent="2" name="PRIMARY">
+        <columns>article_id</columns>
+        <primary>1</primary>
+      </key>
+      <foreign-key id="13" parent="2" name="subcategory_id">
+        <columns>subcategory_id</columns>
+        <ref-key>~.subcategories.PRIMARY</ref-key>
+        <cascade-update-rule>restrict</cascade-update-rule>
+        <cascade-delete-rule>restrict</cascade-delete-rule>
+      </foreign-key>
+      <column id="14" parent="3" name="category_id">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="15" parent="3" name="category">
+        <data-type>varchar(45)</data-type>
+      </column>
+      <key id="16" parent="3" name="PRIMARY">
+        <columns>category_id</columns>
+        <primary>1</primary>
+      </key>
+      <column id="17" parent="4" name="subcategory_id">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="18" parent="4" name="subcategory">
+        <data-type>varchar(45)</data-type>
+      </column>
+      <column id="19" parent="4" name="category_id">
+        <data-type>int(11)</data-type>
+      </column>
+      <index id="20" parent="4" name="category_id_idx">
+        <columns>category_id</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <key id="21" parent="4" name="PRIMARY">
+        <columns>subcategory_id</columns>
+        <primary>1</primary>
+      </key>
+      <foreign-key id="22" parent="4" name="category_id">
+        <columns>category_id</columns>
+        <ref-key>~.categories.PRIMARY</ref-key>
+        <cascade-update-rule>restrict</cascade-update-rule>
+        <cascade-delete-rule>restrict</cascade-delete-rule>
+      </foreign-key>
     </database-model>
   </data-source>
 </component>

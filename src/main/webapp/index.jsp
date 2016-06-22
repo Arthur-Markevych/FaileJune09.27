@@ -15,21 +15,18 @@
     </style>
 </head>
 <body>
-<h2>Welcome to the ${title}</h2>
-
-<div style="background-color:grey; color:white;">
-    <form name="login" method="post" action="/submit">
-        <table style="width:25%">
-            <input name="submit" type="submit" value="Отобразить список" formaction="/userlist" formmethod="post"><br>
-            <tr><td>Логин:</td><td><input type="text"  name="txtusername" placeholder="Логин" /></td></tr>
-            <tr><td>Пароль</td><td><input type="password" name="txtpassword" placeholder="Пароль" /></td></tr>
-            <tr><td><p></td></tr>
-            <tr><td>Имя:</td><td><input type="text" name="txtfirstname" placeholder="Имя" /></td></tr>
-            <tr><td>Фамилия:</td><td><input type="text" name="txtlastname" placeholder="Фамилия" /></td></tr>
-            <br>
-            <tr><td></td><td align="right"><input type="submit" name="submit" value="Добавить" /></td></tr>
-        </table>
-     </form>
+<h3>${title}</h3>
+<div style="background-color: lime; color: black; width: 30%">
+    <form name="login">
+    <table>
+        <tr><td>Логин:</td><td><input type="text" name="txtusername" required placeholder="Логин" /></td></tr>
+        <tr><td>Пароль:</td><td><input type="password" name="txtpassword" required placeholder="Пароль" /></td></tr>
+        <tr>
+            <td><input type="submit" name="submit" value="Вход" formaction="/signin" formmethod="post" /></td>
+            <td><input type="submit" name="registration" value="Регистрация" formnovalidate formaction="/registration.jsp" formmethod="post" /></td>
+        </tr>
+    </table>
+    </form>
 </div>
 </body>
 </html>

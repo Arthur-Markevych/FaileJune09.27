@@ -34,17 +34,15 @@ public class Submit extends HttpServlet {
         user.setPassword(req.getParameter("txtpassword"));
         user.setFirstName(req.getParameter("txtfirstname"));
         user.setLastName(req.getParameter("txtlastname"));
+        user.setRoleId(2);
         user.setCreationDate(ourJavaTimestampObject);
 
         try {
             UserDao userDao = new UserDao(DataConnection.getConnection());
             userDao.persist(user);
 
-
-            session.setAttribute("firstname", user.getFirstName());
-            session.setAttribute("lastname", user.getLastName());
-            session.setAttribute("username", user.getUsername());
-            session.setAttribute("password", user.getPassword());
+            user = userDao.getUserByUsername(user.getUsername());
+            session.setAttribute("user", user);
 
             req.getRequestDispatcher("homepage.jsp").forward(req, resp);
         } catch (SQLException e) {

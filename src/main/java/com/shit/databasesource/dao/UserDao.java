@@ -20,19 +20,19 @@ public class UserDao extends AbstractGenericDao<User> {
 
     @Override
     public String getCreateQuery() {
-        return "INSERT INTO userdata.users (username, password, first_name, last_name, creation_date) \n" +
-                "VALUES (?, ?, ?, ?, ?);";
+        return "INSERT INTO userdata.users (username, password, first_name, last_name, creation_date, role_id) \n" +
+                "VALUES (?, ?, ?, ?, ?, ?);";
     }
 
     @Override
     public String getSelectQuery() {
-        return "SELECT id, username, password, first_name, last_name, creation_date FROM userdata.users";
+        return "SELECT id, username, password, first_name, last_name, creation_date, role_id FROM userdata.users";
     }
 
     @Override
     public String getUpdateQuery() {
         return "UPDATE userdata.users \n" +
-                "SET username = ?, password = ?, first_name = ?, last_name = ?, creation_date = ? \n" +
+                "SET username = ?, password = ?, first_name = ?, last_name = ?, creation_date = ?, role_id = ? \n" +
                 "WHERE id = ?;";
     }
 
@@ -46,6 +46,8 @@ public class UserDao extends AbstractGenericDao<User> {
         return "SELECT id FROM userdata.users";
     }
 
+
+
     @Override
     protected void preparedStatementForInsert(PreparedStatement statement, User object) throws SQLException {
         Timestamp sqlDate = convert(object.getCreationDate());
@@ -55,6 +57,7 @@ public class UserDao extends AbstractGenericDao<User> {
         statement.setString(3,object.getFirstName());
         statement.setString(4,object.getLastName());
         statement.setTimestamp(5, sqlDate);
+        statement.setInt(6, object.getRoleId());
 
     }
 
@@ -68,7 +71,8 @@ public class UserDao extends AbstractGenericDao<User> {
         statement.setString(3, object.getFirstName());
         statement.setString(4, object.getLastName());
         statement.setTimestamp(5, ourJavaTimestampObject);
-        statement.setInt(6, object.getId());
+        statement.setInt(6, object.getRoleId());
+        statement.setInt(7, object.getId());
 
     }
 
@@ -77,6 +81,8 @@ public class UserDao extends AbstractGenericDao<User> {
         ArrayList<User> result = new ArrayList<>();
         while(rs.next()) {
             User user = new User();
+            user.setId(rs.getInt("id"));
+            user.setRoleId(rs.getInt("role_id"));
             user.setUsername(rs.getString("username"));
             user.setPassword(rs.getString("password"));
             user.setFirstName(rs.getString("first_name"));
@@ -133,15 +139,74 @@ public class UserDao extends AbstractGenericDao<User> {
     }
 
     @Override
-    public User getUserByUsername(String username) throws SQLException {
-        User user = new User();
-        String SQL = getIdQuery();
+    public User passwordVerify(String username, String password) throws SQLException {
+        User user = null;
+        String SQL = getSelectQuery();
         SQL += " WHERE username = ?";
         try (PreparedStatement statement = DataConnection.getConnection().prepareStatement(SQL)) {
             statement.setObject(1, username);
             ResultSet rs = statement.executeQuery();
+
+            while (rs.next())
+                if (rs.getString("password").equals(password)) {
+                    user = new User();
+                    user.setId(rs.getInt("id"));
+                    user.setUsername(rs.getString("username"));
+                    user.setPassword(rs.getString("password"));
+                    user.setFirstName(rs.getString("first_name"));
+                    user.setLastName(rs.getString("last_name"));
+                    user.setRoleId(rs.getInt("role_id"));
+                    user.setCreationDate(rs.getTimestamp("creation_date"));
+                } else {
+                    user = null;
+                }
+        } catch (Exception e){
+            System.out.println("Username not found in the database!");
+        }
+        return user;
+    }
+
+    @Override
+    public User dataVerify(String username, String password) throws SQLException {
+        User user = new User();
+        String SQL = getIdQuery();
+        SQL += " WHERE username = ? AND password = ?";
+        try (PreparedStatement statement = DataConnection.getConnection().prepareStatement(SQL)) {
+            statement.setObject(1, username);
+            statement.setObject(2, password);
+            ResultSet rs = statement.executeQuery();
             rs.next();
             user.setId(rs.getInt("id"));
+            user.setUsername(rs.getString("username"));
+            user.setPassword(rs.getString("password"));
+            user.setFirstName(rs.getString("first_name"));
+            user.setLastName(rs.getString("last_name"));
+            user.setRoleId(rs.getInt("role_id"));
+            user.setCreationDate(rs.getTimestamp("creation_date"));
+        }
+        return user;
+    }
+
+    @Override
+    public User getUserByUsername(String username) throws SQLException {
+        User user = new User();
+        String SQL = getSelectQuery();
+        SQL += " WHERE username = ?";
+        try (PreparedStatement statement = DataConnection.getConnection().prepareStatement(SQL)) {
+            statement.setObject(1, username);
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                user.setId(rs.getInt("id"));
+                user.setUsername(rs.getString("username"));
+                user.setPassword(rs.getString("password"));
+                user.setFirstName(rs.getString("first_name"));
+                user.setLastName(rs.getString("last_name"));
+                user.setRoleId(rs.getInt("role_id"));
+                user.setCreationDate(rs.getTimestamp("creation_date"));
+            }
+
+        } catch (Exception e) {
+            throw new SQLException(e);
         }
         return user;
     }

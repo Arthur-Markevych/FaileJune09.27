@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.Calendar;
 
@@ -25,36 +26,34 @@ public class Update extends HttpServlet {
         req.setCharacterEncoding("UTF-8");
         HttpSession session = req.getSession();
 
-        User getuser;
-        String username = (String) session.getAttribute("username");
-        UserDao userDao = new UserDao(DataConnection.getConnection());
+        String username = req.getParameter("username");
 
-        try  {
-            Calendar calendar = Calendar.getInstance();
-            java.sql.Timestamp ourJavaTimestampObject = new java.sql.Timestamp(calendar.getTime().getTime());
+        if (username == null) {
+            PrintWriter pw = resp.getWriter();
+            pw.print("Error data loading!");
+        } else {
 
-            getuser = userDao.getUserByUsername(username);
-            int id = getuser.getId();
-            User user = new User();
-            user.setId(id);
-            user.setUsername(req.getParameter("txtusername"));
-            user.setPassword(req.getParameter("txtpassword"));
-            user.setFirstName(req.getParameter("txtfirstname"));
-            user.setLastName(req.getParameter("txtlastname"));
-            user.setCreationDate(ourJavaTimestampObject);
-            userDao.update(user);
+            UserDao userDao = new UserDao(DataConnection.getConnection());
 
-            session.setAttribute("firstname", user.getFirstName());
-            session.setAttribute("lastname", user.getLastName());
-            session.setAttribute("username", user.getUsername());
-            session.setAttribute("password", user.getPassword());
-        } catch (SQLException e) {
-            e.printStackTrace();
+            try {
+                Calendar calendar = Calendar.getInstance();
+                java.sql.Timestamp ourJavaTimestampObject = new java.sql.Timestamp(calendar.getTime().getTime());
+
+                User user = userDao.getUserByUsername(username);
+
+                user.setFirstName(req.getParameter("txtfirstname"));
+                user.setLastName(req.getParameter("txtlastname"));
+                user.setCreationDate(ourJavaTimestampObject);
+                user.setRoleId(Integer.parseInt(req.getParameter("role")));
+                userDao.update(user);
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            session.getAttribute("title");
+            req.getRequestDispatcher("/edit").forward(req, resp);
         }
-
-        session.getAttribute("title");
-        req.getRequestDispatcher("homepage.jsp").forward(req, resp);
-
     }
 }
 
